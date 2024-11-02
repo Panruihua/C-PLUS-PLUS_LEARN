@@ -79,7 +79,7 @@ char: |* |
 int: | * | * | * | * | 
 char,char: |* | * |
 
-
+  
 ## 显示类型转换
 static_cast:执行关联类型之间的转换，比如一种指针类型向同一个类层次中其他指针类型的转换，或者整数类型向枚举类型的转换，或者浮点类型向整数类型的转换。它还能指针构造函数和转换运算符定义的类型转换。  
 
@@ -88,7 +88,6 @@ reinterpret_cast:处理非关联类型之间的转换，比如整数向指针的
 const_cast:参与转换的类型仅在const修饰符及volatile修饰符上有所区别。  
 
 dynamic_cast:参与转换的类型或者引用向类层次体系的类型转换，并执行运行时检查。  
-
 
 
 Bjarne Stroustrup认为几乎无法为reinterpret_cast担保任何事，reinterpret_cast必须作用于函数指针。
