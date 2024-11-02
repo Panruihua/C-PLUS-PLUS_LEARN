@@ -80,4 +80,29 @@ int: | * | * | * | * |
 char,char: |* | * |
 
 
+## 显示类型转换
+static_cast:执行关联类型之间的转换，比如一种指针类型向同一个类层次中其他指针类型的转换，或者整数类型向枚举类型的转换，或者浮点类型向整数类型的转换。它还能指针构造函数和转换运算符定义的类型转换。  
+
+reinterpret_cast:处理非关联类型之间的转换，比如整数向指针的转换以及指针向另一个非关联指针类型的转换。  
+
+const_cast:参与转换的类型仅在const修饰符及volatile修饰符上有所区别。  
+
+dynamic_cast:参与转换的类型或者引用向类层次体系的类型转换，并执行运行时检查。  
+
+
+
+Bjarne Stroustrup认为几乎无法为reinterpret_cast担保任何事，reinterpret_cast必须作用于函数指针。
+
+```cpp
+    char x = 'a'; //err:不存在char* 向int*隐式类型转换
+    int* p1 = &x; //err：不存在char* 向int* 隐式类型转换
+    int* p2 = static_cast<int*>(&x); //OK:程序员责任自负
+    int* p3 = reinterpret_cast<int*>(&x);
+    struct B{};
+    struct D : B{};
+    B* pb = new D; //OK: D*向B*的隐式类型转换
+    D* pd = pd; //err: 不存在B*向D*的隐式类型转换
+    D* pd = static_cast<D*>(pd); //OK
+
+```
 
