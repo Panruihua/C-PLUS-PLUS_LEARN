@@ -105,3 +105,37 @@ Bjarne Stroustrup认为几乎无法为reinterpret_cast担保任何事，reinterp
 
 ```
 
+
+# 函数
+## constexpr函数
+当constexpr出现在函数定义中时，它的含义是“如果给定了常量表达式作为实参，则该函数应该能用在常量表达式中”。    
+当constexpr出现在对象定义中时，它的含义是“在编译时对初始化器求值”。  
+函数必须足够简单才能在编译时求值：constexpr函数必须包含一条独立的return语句，没有循环，也没有局部变量。  
+并且constexpr函数不能有副作用。也就是说constexpr函数应该是一个纯函数。
+```cpp
+/*所谓副作用，是指函数除了返回结果之外还对外部状态产生影响，
+比如修改全局变量、类的成员变量、或进行I/O操作等。*/
+
+int glob;
+constexpr void bad1(int a) {    //err:不能是void
+    glob = a;   //err:在constexpr函数中有副作用
+}
+
+/*在constexpr函数中有if语句*/
+constexpr int bad2(int a) {
+    if(a >= 0) //err
+        return a;
+    else
+        return -a;
+}
+
+//err1 在constexpr函数中有局部变量
+//err2 在constexpr函数中使用for循环
+constexpr int bad3(int a) {
+    sum = 0; //err1
+    for(int i = 0; i < a; +=i) //err2
+        sum += fac(i);
+    return sum;
+}
+
+```
