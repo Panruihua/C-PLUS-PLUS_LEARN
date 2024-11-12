@@ -111,17 +111,28 @@ Bjarne Stroustrup认为几乎无法为reinterpret_cast担保任何事，reinterp
 当constexpr出现在函数定义中时，它的含义是“如果给定了常量表达式作为实参，则该函数应该能用在常量表达式中”。    
 当constexpr出现在对象定义中时，它的含义是“在编译时对初始化器求值”。  
 函数必须足够简单才能在编译时求值：constexpr函数必须包含一条独立的return语句，没有循环，也没有局部变量。  
-并且constexpr函数不能有副作用。也就是说constexpr函数应该是一个纯函数。
+并且constexpr函数不能有副作用。也就是说constexpr函数应该是一个纯函数。  
+
+与普通constexpr函数相比，constexpr构造函数规则有所区别：只允许简单执行成员初始化操作。  
+
+constexpr函数允许递归和条件表达式。  
+
+必须严格遵循constexpr函数使用习惯，不然编译时间会变大很长，调试难度也很大。  
+
+
+
 ```cpp
 /*所谓副作用，是指函数除了返回结果之外还对外部状态产生影响，
 比如修改全局变量、类的成员变量、或进行I/O操作等。*/
 
+
+//err 不能是void
 int glob;
 constexpr void bad1(int a) {    //err:不能是void
     glob = a;   //err:在constexpr函数中有副作用
 }
 
-/*在constexpr函数中有if语句*/
+//err1 在constexpr函数中有if语句
 constexpr int bad2(int a) {
     if(a >= 0) //err
         return a;
@@ -137,5 +148,32 @@ constexpr int bad3(int a) {
         sum += fac(i);
     return sum;
 }
-
 ```
+
+## [[noreturn]]函数
+在C++中，[[noreturn]] 是一种属性（attribute），用于标注那些不会返回的函数。  
+它告诉编译器该函数在调用后不会再返回到调用它的地方，通常是因为函数会导致程序终止或进入无限循环。  
+[[noreturn]] 属性主要用于提高代码的可读性和帮助编译器进行优化。  
+```cpp
+[[noreturn]] void func();
+```
+### 使用场景  
+[[noreturn]] 通常用于那些永远不会返回的函数，例如：  
+1. 程序终止函数，比如 exit()。  
+2. 抛出异常的函数。  
+3. 无限循环的函数。  
+### [[noreturn]]的作用
+1. 提高代码可读性：标记某些函数不会返回有助于代码维护，使其他开发人员明确知道函数的行为。  
+2. 编译器优化：编译器可以利用这一属性进行优化，比如省略一些不必要的清理或警告。  
+3. 避免警告：编译器在知道某函数不会返回时，会避免产生一些多余的警告。  
+例如，当函数返回类型不是 void 时而没有返回语句时，编译器通常会发出警告，但使用 [[noreturn]] 可以避免这种情况。  
+
+### 注意事项
+1. 返回类型：虽然 [[noreturn]] 函数可以使用任何返回类型，但实际上不应该返回任何值。  
+如果在一个带有 [[noreturn]] 的函数中加入返回语句，行为是未定义的（UB，Undefined Behavior）。  
+2. 无效使用：不要随便在可能返回的函数上使用 [[noreturn]]，否则会引起未定义行为或编译错误。  
+
+
+
+
+ 
